@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 
@@ -26,6 +28,18 @@ public class Aluno {
 	private String SENHA;
 	private String TELEFONE;
 	private String OBJETIVO;
+	
+	@ManyToOne
+	@JoinColumn(name="INSTRUTOR_ID")
+	private Instrutor instrutor;
+
+	public Instrutor getInstrutor() {
+		return instrutor;
+	}
+
+	public void setInstrutor(Instrutor instrutor) {
+		this.instrutor = instrutor;
+	}
 
 	public long getId() {
 		return id;
