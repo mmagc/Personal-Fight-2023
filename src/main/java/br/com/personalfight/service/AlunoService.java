@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.personalfight.model.entity.Aluno;
+import br.com.personalfight.model.entity.Instrutor;
 import br.com.personalfight.model.repository.AlunoRepository;
 import jakarta.transaction.Transactional;
 
@@ -21,6 +22,11 @@ public class AlunoService {
 	public List<Aluno> findAll() {
 		return alunoRepository.findAll();
 	}
+	
+	public List<Aluno> findByInstrutor(Instrutor instrutor) {
+		return alunoRepository.findByInstrutor(instrutor);
+	}
+	
 	
 	@Transactional
 	public Aluno saveNew(Aluno aluno) {

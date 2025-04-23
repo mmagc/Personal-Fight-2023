@@ -5,6 +5,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import br.com.personalfight.model.entity.Aluno;
 import br.com.personalfight.model.entity.Instrutor;
 import jakarta.servlet.http.HttpSession;
 
@@ -21,13 +22,11 @@ public class PageController {
 	}
 	
 	
-	@GetMapping("treinos")
-	public String treinos() {
-		return "/pages/treinos";
-	}
+
 	
 	@GetMapping("avaliacao")
-	public String avaliacao() {
+	public String avaliacao(ModelMap map) {
+		map.addAttribute("aluno", new Aluno());
 		return "/pages/avaliação";
 	}
 	

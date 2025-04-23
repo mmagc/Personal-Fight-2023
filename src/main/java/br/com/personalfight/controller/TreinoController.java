@@ -1,8 +1,6 @@
 package br.com.personalfight.controller;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,25 +13,84 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.personalfight.model.entity.Aluno;
 import br.com.personalfight.model.entity.Treino;
+import br.com.personalfight.service.AlunoService;
 import br.com.personalfight.service.CategoriaService;
-import br.com.personalfight.service.ProdutoService;
+import br.com.personalfight.service.InstrutorService;
+import br.com.personalfight.service.TreinoService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 
 	// DEFINE O ENDEREÇO NA URL PARA ACESSAR OS "END_POINTS" DA CLASSE
-//@RequestMapping("/api/produto")
-public class ProdutoController {
-/*	
-	private ProdutoService produtoService;
+@Controller
+@RequestMapping("/treino")
+public class TreinoController {
+
+	private TreinoService treinoService;
 	private CategoriaService categoriaService;
+	private InstrutorService instrutorService;
+	private AlunoService alunoService;
 		
-	public ProdutoController(ProdutoService produtoService, CategoriaService categoriaService) {
+	
+	
+	public TreinoController(TreinoService treinoService, CategoriaService categoriaService,
+			InstrutorService instrutorService, AlunoService alunoService) {
 		super();
-		this.produtoService = produtoService;
+		this.treinoService = treinoService;
 		this.categoriaService = categoriaService;
+		this.instrutorService = instrutorService;
+		this.alunoService = alunoService;
 	}
 
+	private String serverMessage = null;
+	
+	@GetMapping("/treinos")
+	public String novoTreino(ModelMap model) {
+
+		model.addAttribute("treino", new Treino());
+		model.addAttribute("categorias", categoriaService.findAll());
+		model.addAttribute("instrutors", instrutorService.findAll());
+		model.addAttribute("serverMessage", serverMessage);
+		serverMessage = null;
+		return "/pages/treinos";
+	}
+	
+	@PostMapping("/salvar")
+	public String salvar(
+			@RequestParam(value = "file", required = false) MultipartFile file,
+			@ModelAttribute("treino") Treino treino) {
+
+		//byte[] _arquivo = Base64.getDecoder().decode(arquivo);
+		
+		Aluno aluno = alunoService.findByEmail(treino.getAluno().getEMAIL());
+		
+		treinoService.saveNew(file, treino, aluno);
+		
+		serverMessage = "Dados gravados com sucesso!!!";
+
+		return "redirect:/index";
+	}
+	
+	@GetMapping("/showPdf/{id}")
+	@ResponseBody
+	public void showImage(
+			@PathVariable("id") long id, HttpServletResponse response, Treino treino)
+			throws ServletException, IOException {
+
+		treino = treinoService.findById(id);
+
+		response.setContentType("application/pdf");
+		if (treino.getARQUIVO() != null) {
+			response.getOutputStream().write(treino.getARQUIVO());
+		} else {
+			response.getOutputStream().write(null);
+		}
+
+		response.getOutputStream().close();
+	}
+	
+/*
 	private String serverMessage = null;
 	private String foto = "";
 	// CASO O PRODUTO NÃO TENHA UMA IMAGEM CADASTRADA NO BANCO DE DADOS
@@ -89,15 +146,7 @@ public class ProdutoController {
 	}
 	
 	// NAVEGA PARA PÁGINA PARA CADASTRO DE UM NOVO PRODUTO
-	@GetMapping("/novo")
-	public String novoProduto(ModelMap model) {
 
-		model.addAttribute("produto", new Treino());
-		model.addAttribute("categorias", categoriaService.findAll());
-		model.addAttribute("serverMessage", serverMessage);
-		serverMessage = null;
-		return "produto-novo";
-	}
 	
 	// GRAVA AS INFORMAÇÕES DO PRODUTO
 	// MultipartFile file, NECESSÁRIO PARA GRAVAR A IMAGEM DO PRODUTO
