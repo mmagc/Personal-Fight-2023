@@ -17,7 +17,7 @@ public class PageController {
 
 	@GetMapping("/")
 	public String rootRedirect() {
-		return "redirect:/index";
+		return "redirect:/login";
 	}
 
 
