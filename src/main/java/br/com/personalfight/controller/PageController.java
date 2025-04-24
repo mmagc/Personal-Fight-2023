@@ -15,6 +15,12 @@ public class PageController {
 	
 	String serverMessage = "";
 
+	@GetMapping("/")
+	public String rootRedirect() {
+		return "redirect:/index";
+	}
+
+
 	@GetMapping("index")
 	public String index(HttpSession session) {
 		session.setAttribute("instrutor", session.getAttribute("instrutor"));
